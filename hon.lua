@@ -33,10 +33,10 @@ pq.createhon = function(a, b, c)
 
 	for e = 1, b do
 		d = d                                 ..
-			encoding.int.h[math_random (1, 2)]..
-			encoding.int.o[math_random (1, 2)]..
-			encoding.int.n[math_random (1, 2)]..
-			encoding.int.b
+		   encoding.int.h[math_random (1, 2)]..
+		   encoding.int.o[math_random (1, 2)]..
+		   encoding.int.n[math_random (1, 2)]..
+		   encoding.int.b
 	end
 
 	d = string_left (d, #d-1)
