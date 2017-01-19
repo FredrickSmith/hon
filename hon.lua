@@ -8,12 +8,12 @@ local string_explode  = string.Explode
 local string_implode  = string.Implode
 local os_time         = os.time
 
-pq.BaseT  = function () return {              } end
-pq.BaseMT = function () return {__index = self} end
+pq.BaseT  = function ( ) return {           } end
+pq.BaseMT = function (a) return {__index = a} end
 
 pq.createobject = function (a, b)
 	a = a or pq.BaseT ()
-	setmetatable (a, b or pq.BaseMT ())
+	setmetatable (a, b or pq.BaseMT (a))
 	return a
 end
 
@@ -104,14 +104,14 @@ end
 
 hon = pq.createobject()
 
-function hon:New (a)
-	local b = pq.createobject ({s = "", k = false}, a)
+function hon:New (a, b)
+	local c = pq.createobject (a or {s = "", k = false}, b)
 
-	function b:Push   (a)        pq.push   (self, a) end
-	function b:Key    (a)        pq.key    (self, a) end
-	function b:Encode ( )        pq.encode (self   ) end
-	function b:Decode ( )        pq.decode (self   ) end
-	function b:Finish ( ) return pq.finish (self   ) end
+	function c:Push   (a)        pq.push   (self, a) end
+	function c:Key    (a)        pq.key    (self, a) end
+	function c:Encode ( )        pq.encode (self   ) end
+	function c:Decode ( )        pq.decode (self   ) end
+	function c:Finish ( ) return pq.finish (self   ) end
 
-	return b
+	return c
 end
