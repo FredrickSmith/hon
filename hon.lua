@@ -99,7 +99,7 @@ end
       _pq =  pq.createobject ()
 local _pq = _pq
 
-function _pq:NewObfuscation (a, b)
+function _pq:NewObfuscater (a, b)
 	local c = pq.createobject (a or {string = "", key = false}, b)
 
 	function c:GetString ( ) return self.string end
