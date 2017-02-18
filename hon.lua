@@ -1,12 +1,9 @@
 
 local pq  = {}
 
-local math_random     = math.random
-local math_randomseed = math.randomseed
-local string_left     = string.Left
-local string_explode  = string.Explode
-local string_implode  = string.Implode
-local os_time         = os.time
+local math_random, math_randomseed = math.random, math.randomseed
+local string_left, string_explode, string_implode = string.Left, string.Explode, string.Implode
+local os_time = os.time
 
 pq.BaseT  = function ( ) return {           } end
 pq.BaseMT = function (a) return {__index = a} end
@@ -17,26 +14,25 @@ pq.createobject = function (a, b)
 	return a
 end
 
-pq.push = function (a, b) a.s = a.s..tostring (b) end
-pq.key  = function (a, b) a.k = b                 end
+pq.push = function (a, b) a:SetString (a:GetString ()..tostring (b)) return a end
+pq.key  = function (a, b) a:SetKey (b) return a end
 
 local encoding = {}
 encoding.int = {
-	h = {"h", "H"}, o = {"o", "O"}, n   = {"n", "N"},
-	b = "/",        d = "|",        hon = {6, 9},
-	a = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?	 "
+	t = {{"H", "h"}, {"O", "o"}, {"N", "n"}},
+	b = "/", d = "|", l = {6, 9},
+	m = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?	 "
 }
 encoding.ext = {}
 
-pq.createhon = function(a, b, c)
+pq.createstring = function(a, b, c)
 	local d = ""
 
 	for e = 1, b do
-		d = d                                ..
-		   encoding.int.h[math_random (1, 2)]..
-		   encoding.int.o[math_random (1, 2)]..
-		   encoding.int.n[math_random (1, 2)]..
-		   encoding.int.b
+		for f = 1, #encoding.int.t do
+			d = d..encoding.int.t[f][math_random (1, #encoding.int.t[f])]
+		end
+		d = d..encoding.int.b
 	end
 
 	d = string_left (d, #d-1)
@@ -49,68 +45,72 @@ pq.createhon = function(a, b, c)
 
 	encoding.ext[c and d or a] = c and a or d
 end
+pq.createconversion = function(a, b)
+	math_randomseed (a:GetKey ())
+
+	local c = string_explode ("", encoding.int.m)
+
+	for d = 1, #c do
+		pq.createstring (c[d], math_random (encoding.int.l[1], encoding.int.l[2]), b)
+	end
+end
 
 pq.encode = function (a)
-	if not a.s or a.s == "" then a.s = ":(" return end
+	if not a:GetString () or a:GetString () == "" then a:SetString(":(") return a end
 
-	local b = string_explode ("", a.s)
-	local c = string_explode ("", encoding.int.a)
+	local b = string_explode ("", a:GetString ())
 
-	for d = 1, #b do
-		local e = false
-		for f = 1, #c do if b[d] == c[f] then e = true end end
-		if not e then a.s = ":(" return end
+	if not a:GetKey () then
+		math_randomseed (os_time())
+		a:SetKey        (math_random (0, 2^1023))
 	end
 
-	if not a.k then
-		math_randomseed   (os_time())
-		a.k = math_random (0, 2^1023)
+	pq.createconversion (a, false)
+
+	for c = 1, #b do
+		b[c] = encoding.ext[b[c]]
 	end
 
-	math_randomseed (a.k)
-
-	for e = 1, #encoding.int.a do
-		pq.createhon (c[e], math_random (encoding.int.hon[1], encoding.int.hon[2]))
-	end
-	for e = 1, #b do
-		b[e] = encoding.ext[b[e]]
-	end
-
-	a.s = string_implode (encoding.int.d, b)
+	a:SetString (string_implode (encoding.int.d, b))
+	return a
 end
 pq.decode = function (a)
-	if not a.s or a.s == "" then a.s = ":(" return end
-	if not a.k              then a.s = ":(" return end
+	if not a:GetString () or a:GetString () == "" then a:SetString (":(") return a end
+	if not a:GetKey    ()                         then a:SetString (":(") return a end
 
-	local c = string_explode (encoding.int.d, a.s)
+	local c = string_explode (encoding.int.d, a:GetString ())
 
-	math_randomseed (a.k)
-
-	for e = 1, #encoding.int.a do
-		pq.createhon (encoding.int.a[e], math_random (encoding.int.hon[1], encoding.int.hon[2]), true)
-	end
+	pq.createconversion(a, true)
+	
 	for e = 1, #c do
 		c[e] = encoding.ext[c[e]]
 	end
 
-	a.s = string_implode ("", c)
+	a:SetString (string_implode ("", c))
+	return a
 end
 
 pq.finish = function (a)
-	local b = {a.s, a.k}
+	local b = {a:GetString (), a:GetKey ()}
 	a = nil
 	return b
 end
 
-hon = pq.createobject()
+      _pq =  pq.createobject ()
+local _pq = _pq
 
-function hon:New (a, b)
-	local c = pq.createobject (a or {s = "", k = false}, b)
+function _pq:NewObfuscation (a, b)
+	local c = pq.createobject (a or {string = "", key = false}, b)
 
-	function c:Push   (a)        pq.push   (self, a) end
-	function c:Key    (a)        pq.key    (self, a) end
-	function c:Encode ( )        pq.encode (self   ) end
-	function c:Decode ( )        pq.decode (self   ) end
+	function c:GetString ( ) return self.string end
+	function c:GetKey    ( ) return self.key    end
+	function c:SetString (a) self.string = a    end
+	function c:SetKey    (a) self.key    = a    end
+
+	function c:Push   (a) return pq.push   (self, a) end
+	function c:Key    (a) return pq.key    (self, a) end
+	function c:Encode ( ) return pq.encode (self   ) end
+	function c:Decode ( ) return pq.decode (self   ) end
 	function c:Finish ( ) return pq.finish (self   ) end
 
 	return c
