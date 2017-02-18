@@ -1,3 +1,3 @@
-# hon
+# hOn
 
-You can edit ```encoding.int.a``` to use your own character map but ```2^(3*encoding.int.hon[1])>#encoding.int.a``` MUST be true
+obfuscation using keys, its ment for shits and giggles so use something else if you somehow found this
