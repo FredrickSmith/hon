@@ -39,7 +39,7 @@ pq.createstring = function(a, b, c)
 
 	for d = 1, #encoding.ext do
 		if encoding.ext[d][2] == d then
-			return pq.createhon (a, b, c)
+			return pq.createstring (a, b, c)
 		end
 	end
 
