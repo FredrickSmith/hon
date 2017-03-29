@@ -96,7 +96,7 @@ pq.finish = function (a)
 	return b
 end
 
-      _pq =  _pq or pq.createobject ()
+      _pq = _pq or pq.createobject ()
 local _pq = _pq
 
 function _pq:NewObfuscater (a, b)
